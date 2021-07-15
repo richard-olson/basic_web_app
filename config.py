@@ -1,10 +1,10 @@
 """Flask configuration variables."""
 from os import environ, path
 from dotenv import load_dotenv
-import application.boot as boot
+import basic_web_app.boot as boot
 
 basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, ".env"))
+load_dotenv(path.join(basedir, "application/.env"))
 
 
 class Config:

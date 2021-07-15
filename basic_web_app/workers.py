@@ -1,5 +1,5 @@
-from app import db
 import boto3
+from . import db
 
 
 def get_db_id():
