@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>{{ cfg.tags.AppName }} Demo Application</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="../static/assets/Res_Amazon-EC2_Instance_48_Dark.png" />
+        <!-- Core theme CSS -->
+        <link href="../static/css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-lg-5">
+                <a class="navbar-brand">{{ cfg.tags.AppName }} Demo Application</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-4">
+                <div class="p-4 p-lg-4 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-4">
+                        <h1 class="display-5 fw-bold">Welcome to {{ cfg.tags.AppName }}</h1>
+                        <p class="fs-4">Demo application written to provide a visual representation of instances and databases</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Page Features-->
+                <!-- Status Cards -->
+                <div class="row gx-lg-5">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body text-center fw-bold">Current App Instance</div>
+                            <p class="text-white text-center">Text</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body text-center fw-bold">Total App Instances</div>
+                            <p class="text-white text-center">Text</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body text-center fw-bold">AutoScaleGroup CPU</div>
+                            <p class="text-white text-center">Text</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body text-center fw-bold">Current Database Instance</div>
+                            <p class="text-center {%  if db_id == 'ERROR' %}text-danger">Database Error{% else %}text-white">{{ db_id[0][1] }}{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Instance Cards -->
+        <section class="pt-4">
+            <div class="container px-lg-5 pt-4">
+                <div class="row">
+                {% for i in instances.Reservations %}
+                    {% for instance in i.Instances %}
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-collection"><img src="../static/assets/Res_Amazon-EC2_Instance_48_Dark.png" alt="EC2 Instance"></i></div>
+                                <h2 class="fs-4 fw-bold">{{ instance.InstanceId }}</h2>
+                                <p class="mb-0 fw-normal text-start">AZ: {{ instance.Placement.AvailabilityZone }}</p>
+                                <p class="mb-0 fw-normal text-start {% if instance.State.Name == 'running' %}text-success{% elif instance.State.Name == 'shutting-down' %}text-warning{% else %}{% endif %}">State: {{ instance.State.Name | title }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+                    </div>
+                </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 small text-center text-white">Copyright &copy; Richard Olson 2021</p></div>
+        </footer>
+    </body>
+</html>
