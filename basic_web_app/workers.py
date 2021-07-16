@@ -7,6 +7,13 @@ def get_db_id():
     return db.session.execute(query).fetchall()
 
 
+def get_instance_data(region, stack_name):
+    data = ec2_instances(region, stack_name)
+    cleaned_data = clean_ec2_response(data)
+    sorted_data = sort_ec2_response(cleaned_data, 'InstanceId')
+    return sorted_data
+
+
 def ec2_instances(region, stack_name):
     ec2 = boto3.client('ec2', region_name=region)
     response = ec2.describe_instances(Filters=[
@@ -15,4 +22,19 @@ def ec2_instances(region, stack_name):
             'Values': [stack_name]
         }
     ])
+    return response
+
+
+def clean_ec2_response(payload):
+    response = []
+    for r in payload['Reservations']:
+        for instance in r['Instances']:
+            if instance['State']['Name'] != 'terminated':
+                response.append(instance)
+    return response
+
+
+def sort_ec2_response(payload, sort_by):
+    # Expects cleaned payload list
+    response = sorted(payload, key=lambda k: k[sort_by])
     return response

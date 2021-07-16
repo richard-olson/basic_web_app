@@ -45,7 +45,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="card bg-dark text-white mb-4">
                             <div class="card-body text-center fw-bold">Total App Instances</div>
-                            <p class="text-white text-center">Text</p>
+                            <p class="text-white text-center">{{ instances | length }}</p>
                         </div>
                     </div>
                     <div class="col-xl-3 col-md-6">
@@ -67,8 +67,8 @@
         <section class="pt-4">
             <div class="container px-lg-5 pt-4">
                 <div class="row">
-                {% for i in instances.Reservations %}
-                    {% for instance in i.Instances %}
+                    {% for instance in instances %}
+                        {% if instance.State.Name != 'terminated' %}
                     <div class="col-lg-6 col-xxl-4 mb-5">
                         <div class="card {% if cfg.instance_id == instance.InstanceId %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
@@ -79,8 +79,8 @@
                             </div>
                         </div>
                     </div>
+                        {% endif %}
                     {% endfor %}
-                {% endfor %}
                     </div>
                 </div>
         </section>
