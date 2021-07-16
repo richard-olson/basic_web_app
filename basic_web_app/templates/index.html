@@ -57,7 +57,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="card bg-dark text-white mb-4">
                             <div class="card-body text-center fw-bold">Current Database Instance</div>
-                            <p class="text-center {%  if db_id == 'ERROR' %}text-danger">Database Error{% else %}text-white">{{ db_id[0][1] }}{% endif %}</p>
+                            <p class="text-center {%  if db_id == 'ERROR' %}text-danger">Database Error{% else %}text-white">{{ db_id }}{% endif %}</p>
                         </div>
                     </div>
                 </div>
@@ -67,8 +67,7 @@
         <section class="pt-4">
             <div class="container px-lg-5 pt-4">
                 <div class="row">
-                    {% for instance in instances %}
-                        {% if instance.State.Name != 'terminated' %}
+                {% for instance in instances %}
                     <div class="col-lg-6 col-xxl-4 mb-5">
                         <div class="card {% if cfg.instance_id == instance.InstanceId %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
@@ -79,10 +78,27 @@
                             </div>
                         </div>
                     </div>
-                        {% endif %}
-                    {% endfor %}
-                    </div>
+                {% endfor %}
                 </div>
+            </div>
+        </section>
+        <section class="pt-4">
+            <div class="container px-lg-5 pt-4">
+                <div class="row">
+                {% for db in database %}
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card {% if db_id == db.DBInstanceIdentifier %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-collection"><img src="../static/assets/Res_Amazon-Aurora-Instance_48_Dark.png" alt="EC2 Instance"></i></div>
+                                <h2 class="fs-4 fw-bold">{{ db.DBInstanceIdentifier }}</h2>
+                                <p class="mb-0 fw-normal text-start">AZ: {{ db.AvailabilityZone }}</p>
+                                <p class="mb-0 fw-normal text-start {% if db.DBInstanceStatus == 'available' %}text-success{% elif db.DBInstanceStatus == 'shutting-down' %}text-warning{% else %}{% endif %}">State: {{ db.DBInstanceStatus | title }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
         </section>
         <!-- Footer-->
         <footer class="py-5 bg-dark">

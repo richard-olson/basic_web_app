@@ -38,3 +38,16 @@ def sort_ec2_response(payload, sort_by):
     # Expects cleaned payload list
     response = sorted(payload, key=lambda k: k[sort_by])
     return response
+
+
+def rds_instances(region, cluster_id):
+    rds = boto3.client('rds', region_name=region)
+    response = rds.describe_db_instances(
+        Filters=[
+            {
+                'Name': 'db-cluster-id',
+                'Values': [cluster_id]
+            }
+        ]
+    )
+    return response['DBInstances']
