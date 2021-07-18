@@ -1,10 +1,19 @@
 import boto3
 from . import db
+from flask import current_app as app
 
 
 def get_db_id():
     query = "SHOW VARIABLES WHERE Variable_name = 'aurora_server_id'"
-    return db.session.execute(query).fetchall()
+    result = db.session.execute(query).fetchall()
+
+    # Close DB connection to ensure cached data isn't returned
+    # when the DB connection severed
+    db.session.close()
+    engine_container = db.get_engine(app)
+    engine_container.dispose()
+
+    return result
 
 
 def get_instance_data(region, stack_name):
