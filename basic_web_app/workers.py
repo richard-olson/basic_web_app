@@ -1,3 +1,4 @@
+import datetime
 import boto3
 from . import db
 from flask import current_app as app
@@ -60,3 +61,33 @@ def rds_instances(region, cluster_id):
         ]
     )
     return response['DBInstances']
+
+
+def get_cloudwatch_data(region, asg_name):
+    cw = boto3.client('cloudwatch', region_name=region)
+    response = cw.get_metric_data(
+        MetricDataQueries=[
+            {
+                'Id': 'getASGCPUUtilization',
+                'MetricStat': {
+                    'Metric': {
+                        'Namespace': 'AWS/EC2',
+                        'MetricName': 'CPUUtilization',
+                        'Dimensions': [
+                            {
+                                'Name': 'AutoScalingGroupName',
+                                'Value': asg_name
+                            }
+                        ]
+                    },
+                    'Period': 60,
+                    'Stat': 'Average'
+                }
+            }
+        ],
+        StartTime=datetime.datetime.now() - datetime.timedelta(seconds=60),
+        EndTime=datetime.datetime.now()
+    )
+
+    response = response['MetricDataResults'][0]['Values'][0]
+    return response

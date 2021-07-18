@@ -33,11 +33,17 @@ def index():
     app.logger.debug('Attempting to get rds information')
     database = workers.rds_instances(cfg.region_name, cfg.db_endpoint.split('.')[0])
 
+    app.logger.debug('Attempting to get cloudwatch information')
+    cloudwatch_cpu_data = workers.get_cloudwatch_data(cfg.region_name, cfg.tags['aws:autoscaling:groupName'])
+    app.logger.debug('Cloudwatch response:')
+    app.logger.debug(cloudwatch_cpu_data)
+
     app.logger.debug('Attempting to get render index.html')
     return render_template(
         'index.html',
         db_id=db_id,
         instances=instances,
         database=database,
-        cfg=cfg
+        cfg=cfg,
+        cloudwatch_cpu_data=cloudwatch_cpu_data
     )
