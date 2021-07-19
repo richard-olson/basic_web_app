@@ -15,7 +15,7 @@
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-lg-5">
-        <a class="navbar-brand">{{ cfg.tags.AppName }} Demo Application</a>
+        <a class="navbar-brand">{{ cfg.tags.AppName }} Demo Application{% if diagnostic == True %} Diagnostic Page {% endif %}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>
@@ -92,6 +92,37 @@
                             <p class="mb-0 fw-normal text-start">AZ: {{ instance.Placement.AvailabilityZone }}</p>
                             <p class="mb-0 fw-normal text-start {% if instance.State.Name == 'running' %}text-success{% elif instance.State.Name == 'shutting-down' %}text-warning{% else %}{% endif %}">
                                 State: {{ instance.State.Name | title }}</p>
+                                {% if diagnostic %}
+                                    {% for i in instance_health %}
+                                        {% if i.InstanceId ==  instance.InstanceId%}
+                            <p class="mb-0 fw-normal text-start">Instance Status: {{ i.InstanceStatus.Status }}</p>
+                                            {% if i.InstanceStatus.Status != 'ok' %}
+                            <p class="mb-0 fw-normal text-start">Instance Impairment Status: {{ i.InstanceStatus.Details[0].Status }}</p>
+                            <p class="mb-0 fw-normal text-start">Instance Impairment Since: {{ i.InstanceStatus.Details[0].ImpairedSince }}</p>
+                                            {% endif %}
+                            <p class="mb-0 fw-normal text-start">System Status: {{ i.SystemStatus.Status }}</p>
+                                            {% if i.SystemStatus.Status != 'ok' %}
+                            <p class="mb-0 fw-normal text-start">System Impairment Status: {{ i.InstanceStatus.Details[0].Status }}</p>
+                            <p class="mb-0 fw-normal text-start">System Impairment Since: {{ i.SystemStatus.Details[0].ImpairedSince }}</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for i in asg.Instances %}
+                                        {% if i.InstanceId == instance.InstanceId %}
+                            <p class="mb-0 fw-normal text-start{% if i.LifecycleState != 'InService' %} text-warning"{% else %}"{% endif %}>ASG Lifecycle Status: {{ i.LifecycleState }}</p>
+                            <p class="mb-0 fw-normal text-start{% if i.HealthStatus != 'Healthy' %} text-warning"{% else %}"{% endif %}>ASG Health Status: {{ i.HealthStatus }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for i in target_group.TargetHealthDescriptions %}
+                                        {% if i.Target.Id == instance.InstanceId %}
+                            <p class="mb-0 fw-normal text-start{% if i.TargetHealth.State != 'healthy' %} text-warning"{% else %}"{% endif %}>TG Health State: {{ i.TargetHealth.State }}</p>
+                                            {% if i.TargetHealth.State != 'healthy' %}
+                            <p class="mb-0 fw-normal text-start{% if i.TargetHealth != 'healthy' %} text-warning"{% else %}"{% endif %}>TG Health Reason: {{ i.TargetHealth.Reason }}</p>
+                            <p class="mb-0 fw-normal text-start{% if i.TargetHealth != 'healthy' %} text-warning"{% else %}"{% endif %}>TG Health Description: {{ i.TargetHealth.Description }}</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                         </div>
                     </div>
                 </div>

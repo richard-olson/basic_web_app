@@ -1,7 +1,11 @@
+import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def create_app():
@@ -16,4 +20,3 @@ def create_app():
         db.create_all()  # Create database tables for our data models
 
         return app
-

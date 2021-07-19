@@ -1,6 +1,10 @@
 import datetime
 import boto3
-from . import db
+from . import (
+    db,
+    logger
+)
+
 from flask import current_app as app
 
 
@@ -50,6 +54,35 @@ def sort_ec2_response(payload, sort_by):
     return response
 
 
+def get_instance_health(region, instances):
+    ec2 = boto3.client('ec2', region_name=region)
+    response = ec2.describe_instance_status(
+        InstanceIds=instances
+    )
+
+    return response['InstanceStatuses']
+
+
+def get_asg_details(region, name):
+    client = boto3.client('autoscaling', region_name=region)
+    response = client.describe_auto_scaling_groups(
+        AutoScalingGroupNames=[
+            name
+        ]
+    )
+
+    return response['AutoScalingGroups'][0]
+
+
+def get_alb_target_health(region, name):
+    client = boto3.client('elbv2', region_name=region)
+    response = client.describe_target_health(
+        TargetGroupArn=name
+    )
+
+    return response
+
+
 def rds_instances(region, cluster_id):
     rds = boto3.client('rds', region_name=region)
     response = rds.describe_db_instances(
@@ -80,14 +113,20 @@ def get_cloudwatch_data(region, asg_name):
                             }
                         ]
                     },
-                    'Period': 60,
+                    'Period': 10,
                     'Stat': 'Average'
                 }
             }
         ],
-        StartTime=datetime.datetime.now() - datetime.timedelta(seconds=60),
+        StartTime=datetime.datetime.now() - datetime.timedelta(minutes=120),
         EndTime=datetime.datetime.now()
     )
+    logger.debug('Cloudwatch response:')
+    logger.debug(response['MetricDataResults'][0])
 
-    response = response['MetricDataResults'][0]['Values'][0]
+    if len(response['MetricDataResults'][0]['Values']) > 0:
+        response = response['MetricDataResults'][0]['Values'][0]
+    else:
+        response = 0
+
     return response
