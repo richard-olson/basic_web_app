@@ -1,7 +1,8 @@
 from flask import (
     render_template,
     request,
-    current_app as app
+    current_app as app,
+    make_response
 )
 import random
 import logging
@@ -86,18 +87,22 @@ def index():
         diagnostic = False
 
     logger.debug('Attempting to get render index.html')
-    return render_template(
-        'index.html',
-        db_id=db_id,
-        instances=instances,
-        database=database,
-        cfg=cfg,
-        cloudwatch_cpu_data=cloudwatch_cpu_data,
-        diagnostic=diagnostic,
-        instance_health=health,
-        asg=asg,
-        target_group=alb_target_group
+    response = make_response(
+        render_template(
+            'index.html',
+            db_id=db_id,
+            instances=instances,
+            database=database,
+            cfg=cfg,
+            cloudwatch_cpu_data=cloudwatch_cpu_data,
+            diagnostic=diagnostic,
+            instance_health=health,
+            asg=asg,
+            target_group=alb_target_group
+        )
     )
+    response.headers['Cache-Control'] = 'max-age=0, no-store'
+    return response
 
 
 @app.route('/load-test')
