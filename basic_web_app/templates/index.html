@@ -93,6 +93,7 @@
                             <p class="mb-0 fw-normal text-start {% if instance.State.Name == 'running' %}text-success{% elif instance.State.Name == 'shutting-down' %}text-warning{% else %}{% endif %}">
                                 State: {{ instance.State.Name | title }}</p>
                                 {% if diagnostic %}
+                                <p class="mb-0 fw-normal text-start">Uptime: {{ instance.Uptime }}</p>
                                 <p class="mb-0 fw-normal text-start">Instance Type: {{ instance.InstanceType }}</p>
                                     {% for i in instance_health %}
                                         {% if i.InstanceId ==  instance.InstanceId%}

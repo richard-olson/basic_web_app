@@ -45,6 +45,11 @@ def clean_ec2_response(payload):
         for instance in r['Instances']:
             if instance['State']['Name'] != 'terminated':
                 response.append(instance)
+
+    for r in response:
+        r['Uptime'] = (
+            datetime.datetime.now(datetime.timezone.utc) - r['LaunchTime'])
+
     return response
 
 
