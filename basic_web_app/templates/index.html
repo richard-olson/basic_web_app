@@ -99,12 +99,10 @@
                             <p class="mb-0 fw-normal text-start">Instance Status: {{ i.InstanceStatus.Status }}</p>
                                             {% if i.InstanceStatus.Status != 'ok' %}
                             <p class="mb-0 fw-normal text-start">Instance Impairment Status: {{ i.InstanceStatus.Details[0].Status }}</p>
-                            <p class="mb-0 fw-normal text-start">Instance Impairment Since: {{ i.InstanceStatus.Details[0].ImpairedSince }}</p>
                                             {% endif %}
                             <p class="mb-0 fw-normal text-start">System Status: {{ i.SystemStatus.Status }}</p>
                                             {% if i.SystemStatus.Status != 'ok' %}
-                            <p class="mb-0 fw-normal text-start">System Impairment Status: {{ i.InstanceStatus.Details[0].Status }}</p>
-                            <p class="mb-0 fw-normal text-start">System Impairment Since: {{ i.SystemStatus.Details[0].ImpairedSince }}</p>
+                            <p class="mb-0 fw-normal text-start">System Impairment Status: {{ i.SystemStatus.Details[0].Status }}</p>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
