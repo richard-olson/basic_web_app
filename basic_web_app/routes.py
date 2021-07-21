@@ -116,4 +116,7 @@ def load_test():
     for i in range(0, load_cycles):
         load = math.sqrt(random.randrange(1, 1000))
         number += load
-    return str(number)
+
+    response = make_response(str(number))
+    response.headers['Cache-Control'] = 'max-age=0, no-store'
+    return response
