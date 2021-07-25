@@ -1,8 +1,9 @@
+from operator import methodcaller
 from flask import (
     render_template,
+    make_response,
     request,
     current_app as app,
-    make_response
 )
 import random
 import logging
@@ -18,6 +19,7 @@ from . import (
 
 
 cfg = config.Config
+cache_control = 'max-age=0, no-store'
 
 
 @app.route("/")
@@ -102,7 +104,7 @@ def index():
             target_group=alb_target_group
         )
     )
-    response.headers['Cache-Control'] = 'max-age=0, no-store'
+    response.headers['Cache-Control'] = cache_control
     return response
 
 
@@ -119,5 +121,49 @@ def load_test():
         number += load
 
     response = make_response(str(number))
-    response.headers['Cache-Control'] = 'max-age=0, no-store'
+    response.headers['Cache-Control'] = cache_control
+    return response
+
+
+@app.route('/jobs', methods=['GET'])
+def jobs_get():
+
+    response = make_response(
+        render_template(
+            'jobs.html',
+            cfg=cfg
+        )
+    )
+    response.headers['Cache-Control'] = cache_control
+    return response
+
+
+@app.route('/jobs', methods=['POST'])
+def jobs_post():
+    r = request
+    logger.info('Received a post on jobs page')
+    logger.info(r.form)
+
+    error = None
+    name = r.form.get('name')
+    employer = r.form.get('employer')
+    salary = r.form.get('salary')
+    description = r.form.get('description')
+
+    if not name or not employer or not salary or not description:
+        error = 'Some required fields are missing.'
+
+    response = make_response(
+        render_template(
+            'jobs.html',
+            cfg=cfg,
+            error=error,
+            name=name,
+            employer=employer,
+            salary=salary,
+            description=description
+        )
+    )
+
+    response.headers['Cache-Control'] = cache_control
     return response

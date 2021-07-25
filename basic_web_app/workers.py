@@ -4,6 +4,7 @@ from . import (
     db,
     logger
 )
+from typing import Optional
 
 from flask import current_app as app
 
@@ -135,3 +136,6 @@ def get_cloudwatch_data(region, asg_name):
         response = 0
 
     return response
+
+# def create_job(name: str, employer: str, salary:int, description: str) -> Optional[Job]:
+#     pass
