@@ -12,7 +12,8 @@ import math
 import re
 from . import (
     workers,
-    logger
+    logger,
+    models
 )
 
 

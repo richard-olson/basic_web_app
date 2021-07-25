@@ -1,13 +1,13 @@
-from app import db
+from . import db
 
 
 class Jobs(db.Model):
     __tablename__ = 'jobs'
 
-    id = db.Column(db.String, primary_key=True)
-    name = db.Column(db.String)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
     created_date = db.Column(db.DateTime)
-    description = db.Column(db.String)
+    description = db.Column(db.String(160))
     salary = db.Column(db.Integer)
 
     def __repr__(self):
