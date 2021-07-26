@@ -26,7 +26,7 @@
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-dark text-white mb-4">
-                    <div class="card-body text-center fw-bold">Current Database Instance</div>
+                    <div class="card-body text-center fw-bold">Database Availability Zone</div>
                     <p class="text-center {% if db_id == 'ERROR' %}text-danger">Database Error{% else %}text-white">
                         {% for db in database %}{% if db_id == db.DBInstanceIdentifier %}{{ db.AvailabilityZone }}{% endif %}{% endfor %}{% endif %}</p>
                 </div>

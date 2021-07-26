@@ -1,12 +1,10 @@
 import datetime
 import boto3
 from . import (
-    db,
     logger
 )
-from typing import Optional
-
 from flask import current_app as app
+from .models import Jobs, db
 
 
 def get_db_id():
@@ -137,5 +135,26 @@ def get_cloudwatch_data(region, asg_name):
 
     return response
 
-# def create_job(name: str, employer: str, salary:int, description: str) -> Optional[Job]:
-#     pass
+
+def create_job(name: str, employer: str, salary: int, description: str):
+
+    job = Jobs(
+        name=name,
+        salary=salary.strip('$ '),
+        employer=employer,
+        description=description,
+        created_date=datetime.datetime.now(
+            tz=datetime.timezone(
+                datetime.timedelta(hours=10)
+            )
+        )
+    )
+
+    logger.info('Creating database entry')
+    logger.info(job)
+    db.session.add(job)
+    db.session.commit()
+
+    result = 'Job created'
+
+    return result

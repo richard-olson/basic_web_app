@@ -1,12 +1,11 @@
-from operator import methodcaller
 from flask import (
     render_template,
     make_response,
     request,
+    redirect,
     current_app as app,
 )
 import random
-import logging
 import datetime
 import config
 import math
@@ -14,9 +13,8 @@ import re
 from . import (
     workers,
     logger,
-    models
 )
-
+from .models import Jobs
 
 cfg = config.Config
 cache_control = 'max-age=0, no-store'
@@ -131,7 +129,8 @@ def jobs_get():
     response = make_response(
         render_template(
             'jobs.html',
-            cfg=cfg
+            cfg=cfg,
+            jobs=Jobs.query.all()
         )
     )
     response.headers['Cache-Control'] = cache_control
@@ -153,17 +152,32 @@ def jobs_post():
     if not name or not employer or not salary or not description:
         error = 'Some required fields are missing.'
 
+        response = make_response(
+            render_template(
+                'jobs.html',
+                cfg=cfg,
+                error=error,
+                name=name,
+                employer=employer,
+                salary=salary,
+                description=description,
+                jobs=Jobs.query.all()
+            )
+        )
+
+        response.headers['Cache-Control'] = cache_control
+        return response
+
+    job_create = workers.create_job(name, employer, salary, description)
+
     response = make_response(
         render_template(
             'jobs.html',
             cfg=cfg,
-            error=error,
-            name=name,
-            employer=employer,
-            salary=salary,
-            description=description
+            creation_message=job_create,
+            jobs=Jobs.query.all()
         )
     )
-
     response.headers['Cache-Control'] = cache_control
+
     return response
