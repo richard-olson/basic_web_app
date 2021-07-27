@@ -17,7 +17,7 @@ from . import (
 from .models import Jobs
 
 cfg = config.Config
-cache_control = "max-age=0, no-store"
+no_cache = "max-age=0, no-store"
 
 
 @app.route("/")
@@ -94,14 +94,14 @@ def index():
             target_group=alb_target_group,
         )
     )
-    response.headers["Cache-Control"] = cache_control
+    response.headers["Cache-Control"] = no_cache
     return response
 
 
 @app.route("/load-test")
 def load_test():
 
-    load_cycles = 100000
+    load_cycles = 10000
 
     logger.info("Starting load-test function")
     start_time = datetime.datetime.now()
@@ -111,7 +111,7 @@ def load_test():
         number += load
 
     response = make_response(str(number))
-    response.headers["Cache-Control"] = cache_control
+    response.headers["Cache-Control"] = no_cache
     return response
 
 
@@ -121,7 +121,7 @@ def jobs_get():
     response = make_response(
         render_template("jobs.html", cfg=cfg, jobs=Jobs.query.all())
     )
-    response.headers["Cache-Control"] = cache_control
+    response.headers["Cache-Control"] = no_cache
     return response
 
 
@@ -153,7 +153,7 @@ def jobs_post():
             )
         )
 
-        response.headers["Cache-Control"] = cache_control
+        response.headers["Cache-Control"] = no_cache
         return response
 
     job_create = workers.create_job(name, employer, salary, description)
@@ -163,7 +163,7 @@ def jobs_post():
             "jobs.html", cfg=cfg, creation_message=job_create, jobs=Jobs.query.all()
         )
     )
-    response.headers["Cache-Control"] = cache_control
+    response.headers["Cache-Control"] = no_cache
 
     return response
 
