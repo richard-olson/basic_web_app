@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <title>{{ cfg.tags.AppName }} Demo Application</title>
+    <title>{{ localhost.tags.AppName }} Demo Application</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="../static/assets/Res_Amazon-EC2_Instance_48_Dark.png"/>
     <!-- Core theme CSS -->
@@ -15,7 +15,7 @@
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-lg-5">
-        <a class="navbar-brand">{{ cfg.tags.AppName }} ({{ cfg.tags.Environment }}) Demo Application{% if diagnostic == True %} Diagnostic Page {% endif %}</a>
+        <a class="navbar-brand">{{ localhost.tags.AppName }} ({{ localhost.tags.Environment }}) Demo Application{% if diagnostic == True %} Diagnostic Page {% endif %}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>
@@ -32,7 +32,7 @@
     <div class="container px-lg-4">
         <div class="p-2 p-lg-2 bg-light rounded-3 text-center">
             <div class="m-2 m-lg-2">
-                <h1 class="display-5 fw-bold">Welcome to {{ cfg.tags.AppName }} ({{ cfg.tags.Environment }})</h1>
+                <h1 class="display-5 fw-bold">Welcome to {{ localhost.tags.AppName }} ({{ localhost.tags.Environment }})</h1>
                 <p class="fs-4">Demo application written to provide a visual representation of instances and
                     databases</p>
             </div>
@@ -42,7 +42,7 @@
 {% block content %}{% endblock %}
 <!-- Footer-->
 <footer class="py-5 bg-dark">
-    <div class="container"><p class="m-0 small text-center text-white">Copyright &copy; Richard Olson 2021</p></div>
+    <div class="container"><p class="m-0 small text-center text-white">Built for Awsome Builders by Awesome Builders</p></div>
 </footer>
 </body>
 </html>

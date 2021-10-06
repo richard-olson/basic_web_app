@@ -1,22 +1,23 @@
-import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from basic_web_app.infrastructure import instance
+
+app = Flask(__name__)
+app.config.from_object("config.FlaskSettings")
+
+db = SQLAlchemy(app)
+# db.init_app(app)
+db.create_all()
+
+def register_blueprints():
+    from basic_web_app.views.home_views import blueprint as home
+    from basic_web_app.views.loadtest_views import blueprint as loadtest
+    from basic_web_app.views.health_views import blueprint as health
+    from basic_web_app.views.job_views import blueprint as jobs
+    app.register_blueprint(home)
+    app.register_blueprint(loadtest)
+    app.register_blueprint(health)
+    app.register_blueprint(jobs)
 
 
-db = SQLAlchemy()
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-def create_app():
-    app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object("config.Config")
-
-    db.init_app(app)
-
-    with app.app_context():
-        from . import routes  # Import routes
-
-        db.create_all()  # Create database tables for our data models
-
-        return app
+register_blueprints()

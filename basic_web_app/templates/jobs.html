@@ -12,11 +12,12 @@
                     <input class="form-control form-control-lg mb-2" name="salary" type="text" placeholder="Salary" value="{{salary}}"/>
                     <input class="form-control form-control-lg mb-2" name="description" type="text" placeholder="Description" value="{{description}}"/>
                 <div class="col-auto"><button class="btn btn-primary btn-lg mt-2" type="submit">Submit</button></div>
-            {% if error %}
-                <div class="text-center text-danger mb-3">{{error}}</div>
-            {% endif %}
-            {% if creation_message %}
-                <div class="text-center text-success mb-3">{{creation_message}}</div>
+            {% if new_job is defined %}
+                {% if new_job == True %}
+                <div class="text-center text-success mb-3">Created Successfully</div>
+                {% elif new_job == False %}
+                <div class="text-center text-danger mb-3">All fields must be completed</div>
+                {% endif %}
             {% endif %}
                 </div>
             </div>

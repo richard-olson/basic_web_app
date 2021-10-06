@@ -9,26 +9,26 @@
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-body text-center fw-bold">Load Balanced to Instance</div>
-                    <p class="text-white text-center">{{ cfg.instance_id }}</p>
+                    <p class="text-white text-center">{{ localhost.instance_id }}</p>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-body text-center fw-bold">Total App Instances</div>
-                    <p class="text-white text-center">{{ instances | length }}</p>
+                    <p class="text-white text-center">{{ ec2_data | length }}</p>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-body text-center fw-bold">AutoScaleGroup 1 Min CPU</div>
-                    <p class="text-white text-center">{{ cloudwatch_cpu_data | round }}%</p>
+                    <p class="text-white text-center">{{ cloudwatch | round }}%</p>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-body text-center fw-bold">Database Availability Zone</div>
                     <p class="text-center {% if db_id == 'ERROR' %}text-danger">Database Error{% else %}text-white">
-                        {% for db in database %}{% if db_id == db.DBInstanceIdentifier %}{{ db.AvailabilityZone }}{% endif %}{% endfor %}{% endif %}</p>
+                        {% for db in rds %}{% if db_id == db.DBInstanceIdentifier %}{{ db.AvailabilityZone }}{% endif %}{% endfor %}{% endif %}</p>
                 </div>
             </div>
         </div>
@@ -47,9 +47,9 @@
 <section class="pt-4">
     <div class="container px-lg-5 pt-4">
         <div class="row">
-            {% for instance in instances %}
+            {% for instance in ec2_data %}
                 <div class="col-lg-6 col-xxl-4 mb-5">
-                    <div class="card {% if cfg.instance_id == instance.InstanceId %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
+                    <div class="card {% if localhost.instance_id == instance.InstanceId %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
                                     class="bi bi-collection"><img
@@ -62,7 +62,7 @@
                                 {% if diagnostic %}
                                 <p class="mb-0 fw-normal text-start">Uptime: {{ instance.Uptime }}</p>
                                 <p class="mb-0 fw-normal text-start">Instance Type: {{ instance.InstanceType }}</p>
-                                    {% for i in instance_health %}
+                                    {% for i in ec2_health %}
                                         {% if i.InstanceId ==  instance.InstanceId%}
                             <p class="mb-0 fw-normal text-start">Instance Status: {{ i.InstanceStatus.Status }}</p>
                                             {% if i.InstanceStatus.Status != 'ok' %}
@@ -80,7 +80,7 @@
                             <p class="mb-0 fw-normal text-start{% if i.HealthStatus != 'Healthy' %} text-warning"{% else %}"{% endif %}>ASG Health Status: {{ i.HealthStatus }}</p>
                                         {% endif %}
                                     {% endfor %}
-                                    {% for i in target_group.TargetHealthDescriptions %}
+                                    {% for i in targetgroup.TargetHealthDescriptions %}
                                         {% if i.Target.Id == instance.InstanceId %}
                             <p class="mb-0 fw-normal text-start{% if i.TargetHealth.State != 'healthy' %} text-warning"{% else %}"{% endif %}>TG Health State: {{ i.TargetHealth.State }}</p>
                                             {% if i.TargetHealth.State != 'healthy' %}
@@ -109,7 +109,7 @@
 <section class="pt-4">
     <div class="container px-lg-5 pt-4">
         <div class="row">
-            {% for db in database %}
+            {% for db in rds %}
                 <div class="col-lg-6 col-xxl-4 mb-5">
                     <div class="card {% if db_id == db.DBInstanceIdentifier %}bg-secondary{% else %}bg-light{% endif %} border-0 h-100">
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
