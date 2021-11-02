@@ -6,8 +6,6 @@ app = Flask(__name__)
 app.config.from_object("config.FlaskSettings")
 
 db = SQLAlchemy(app)
-# db.init_app(app)
-db.create_all()
 
 def register_blueprints():
     from basic_web_app.views.home_views import blueprint as home
@@ -19,5 +17,7 @@ def register_blueprints():
     app.register_blueprint(health)
     app.register_blueprint(jobs)
 
-
 register_blueprints()
+
+# Create tables from models used within blueprints
+db.create_all()
