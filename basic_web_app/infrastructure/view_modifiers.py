@@ -5,7 +5,9 @@ import werkzeug
 import werkzeug.wrappers
 
 
-def response(*, mimetype: str = None, template_file: str = None):
+def response(
+    *, mimetype: str = None, template_file: str = None, no_caching: bool = False
+):
     def response_inner(f):
         # print("Wrapping in response {}".format(f.__name__), flush=True)
 
@@ -26,7 +28,10 @@ def response(*, mimetype: str = None, template_file: str = None):
 
             if template_file and not isinstance(response_val, dict):
                 raise Exception(
-                    "Invalid return type {}, we expected a dict as the return value.".format(type(response_val)))
+                    "Invalid return type {}, we expected a dict as the return value.".format(
+                        type(response_val)
+                    )
+                )
 
             if template_file:
                 response_val = flask.render_template(template_file, **response_val)
@@ -35,6 +40,12 @@ def response(*, mimetype: str = None, template_file: str = None):
             resp.model = model
             if mimetype:
                 resp.mimetype = mimetype
+
+            if no_caching is True:
+                resp.headers.set(
+                    "Cache-Control",
+                    "no-store, no-cache, must-revalidate, private, max-age=0",
+                )
 
             return resp
 

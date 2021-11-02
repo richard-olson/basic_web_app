@@ -1,17 +1,15 @@
 from flask import Blueprint, request
+from basic_web_app.infrastructure.no_cache import no_cache
 from basic_web_app.infrastructure.view_modifiers import response
 from basic_web_app.viewmodels.home.index_viewmodel import IndexViewModel
 
 
 blueprint = Blueprint("home", __name__, template_folder="templates")
-# no_cache = "max-age=0, no-store"
-
 
 @blueprint.route("/")
-@response(template_file="index.html")
+@response(template_file="index.html", no_caching=True)
 def index():
 
     vm = IndexViewModel()
 
-    # response.headers["Cache-Control"] = no_cache
     return vm.to_dict()
