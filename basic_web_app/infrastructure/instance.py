@@ -16,7 +16,7 @@ class Data:
 
     def _retrieve_aws_tags(self):
         instance_tags = aws.get_instance(self.instance_id, self.region)["Tags"]
-        # Convert tags from [{"Key": Keyvalue}, {"Value": Value}] to dict
+        # Convert tags from [{"Key": TheKey, {"Value": TheValue}] to {TheKey: TheValue}
         aws_tags = {
             tag_kv_pair["Key"]: tag_kv_pair["Value"] for tag_kv_pair in instance_tags
         }

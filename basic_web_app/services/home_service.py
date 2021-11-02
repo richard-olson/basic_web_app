@@ -4,116 +4,88 @@ from basic_web_app import app, db
 from basic_web_app.infrastructure import aws, instance
 
 
-class HomePage:
-    def __init__(self, request_data):
-        self.localhost = instance.Data()
-        self.fetch_ec2_data()
-        self.fetch_ec2_health_data()
-        self.fetch_asg_data()
-        self.fetch_alb_data()
-        self.fetch_db_id_data()
-        self.fetch_rds_data()
-        self.fetch_cloudwatch_data()
-        self.set_diagnostic_mode(request_data)
+def get_localhost_data():
+    return instance.Data()
 
-    def fetch_ec2_data(self):
 
-        self.ec2_data = aws.get_instance_data(
-            self.localhost.get_region(),
-            self.localhost.get_tags()["aws:cloudformation:stack-name"],
-        )
+def get_ec2_data(localhost):
 
-    def fetch_ec2_health_data(self):
+    ec2_data = aws.get_instance_data(
+        localhost.get_region(),
+        localhost.get_tags()["aws:cloudformation:stack-name"],
+    )
 
-        list_of_instances = [i["InstanceId"] for i in self.ec2_data]
-        self.ec2_health_data = aws.get_instance_health(
-            self.localhost.get_region(), list_of_instances
-        )
+    return ec2_data
 
-    def fetch_asg_data(self):
 
-        for tag in self.ec2_data[0]["Tags"]:
-            if tag["Key"] == "aws:autoscaling:groupName":
-                asg_name = tag["Value"]
+def get_ec2_health_data(localhost, ec2_data):
 
-        self.asg_data = aws.get_asg_details(self.localhost.get_region(), asg_name)
+    list_of_instances = [i["InstanceId"] for i in ec2_data]
+    ec2_health_data = aws.get_instance_health(localhost.get_region(), list_of_instances)
 
-    def fetch_alb_data(self):
+    return ec2_health_data
 
-        self.alb_data = aws.get_alb_target_health(
-            self.localhost.get_region(), self.asg_data["TargetGroupARNs"][0]
-        )
 
-    def fetch_db_id_data(self):
+def get_asg_data(localhost, ec2_data):
 
-        query = "SHOW VARIABLES WHERE Variable_name = 'aurora_server_id'"
-        try:
-            self.db_id = db.session.execute(query).fetchall()[0][1]
-            # Close DB connection to ensure cached data isn't returned when the DB connection severed
-            db.session.close()
-            engine_container = db.get_engine(app)
-            engine_container.dispose()
-        except Exception as e:
-            self.db_id = "ERROR"
+    for tag in ec2_data[0]["Tags"]:
+        if tag["Key"] == "aws:autoscaling:groupName":
+            asg_name = tag["Value"]
 
-    def fetch_rds_data(self):
+    asg_data = aws.get_asg_details(localhost.get_region(), asg_name)
 
-        self.rds_data = aws.rds_instances(
-            self.localhost.get_region(),
-            self.localhost.get_database_endpoint().split(".")[0],
-        )
+    return asg_data
 
-    def fetch_cloudwatch_data(self):
-        self.cloudwatch_data = aws.get_cloudwatch_data(
-            self.localhost.get_region(),
-            self.localhost.get_tags()["aws:autoscaling:groupName"],
-        )
 
-    def set_diagnostic_mode(self, request_data: request):
+def get_alb_data(localhost, asg_data):
 
-        diagnostic_arg = request_data.args.get("diagnostic", default="No", type=str)
+    alb_data = aws.get_alb_target_health(
+        localhost.get_region(), asg_data["TargetGroupARNs"][0]
+    )
 
-        if search("[Yy]es|[Tt]rue", diagnostic_arg):
-            self.diagnostic_mode = True
-        else:
-            self.diagnostic_mode = False
+    return alb_data
 
-    def get_ec2_data(self):
-        return self.ec2_data
 
-    def get_ec2_health_data(self):
-        return self.ec2_health_data
+def get_db_id_data():
 
-    def get_asg_data(self):
-        return self.asg_data
+    query = "SHOW VARIABLES WHERE Variable_name = 'aurora_server_id'"
+    try:
+        db_id = db.session.execute(query).fetchall()[0][1]
+        # Close DB connection to ensure cached data isn't returned when the DB connection severed
+        db.session.close()
+        engine_container = db.get_engine(app)
+        engine_container.dispose()
+    except Exception as e:
+        db_id = "ERROR"
 
-    def get_alb_data(self):
-        return self.alb_data
+    return db_id
 
-    def get_db_id_data(self):
-        return self.db_id
 
-    def get_rds_data(self):
-        return self.rds_data
+def get_rds_data(localhost):
 
-    def get_cloudwatch_data(self):
-        return self.cloudwatch_data
+    rds_data = aws.rds_instances(
+        localhost.get_region(),
+        localhost.get_database_endpoint().split(".")[0],
+    )
 
-    def get_diagnostic_mode(self):
-        return self.diagnostic_mode
+    return rds_data
 
-    def get_home_page_data(self) -> dict:
 
-        data = {
-            "localhost": self.localhost,
-            "ec2_data": self.get_ec2_data(),
-            "ec2_health": self.get_ec2_health_data(),
-            "asg": self.get_asg_data(),
-            "targetgroup": self.get_alb_data(),
-            "db_id": self.get_db_id_data(),
-            "rds": self.get_rds_data(),
-            "cloudwatch": self.get_cloudwatch_data(),
-            "diagnostic": self.get_diagnostic_mode()
-        }
+def get_cloudwatch_data(localhost):
+    cloudwatch_data = aws.get_cloudwatch_data(
+        localhost.get_region(),
+        localhost.get_tags()["aws:autoscaling:groupName"],
+    )
 
-        return data
+    return cloudwatch_data
+
+
+def get_diagnostic_mode(request_data):
+
+    if "diagnostic" in request_data:
+        if search("[Yy]es|[Tt]rue", request_data["diagnostic"]):
+            diagnostic_mode = True
+    else:
+        diagnostic_mode = False
+
+    return diagnostic_mode

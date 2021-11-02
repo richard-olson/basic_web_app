@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from basic_web_app.infrastructure.view_modifiers import response
-import basic_web_app.services.home_service as home_service
+from basic_web_app.viewmodels.home.index_viewmodel import IndexViewModel
 
 
 blueprint = Blueprint("home", __name__, template_folder="templates")
@@ -11,7 +11,7 @@ blueprint = Blueprint("home", __name__, template_folder="templates")
 @response(template_file="index.html")
 def index():
 
-    data = home_service.HomePage(request)
+    vm = IndexViewModel()
 
     # response.headers["Cache-Control"] = no_cache
-    return data.get_home_page_data()
+    return vm.to_dict()
