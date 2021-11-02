@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-from basic_web_app.infrastructure.no_cache import no_cache
 from basic_web_app.infrastructure.view_modifiers import response
 from basic_web_app.viewmodels.home.index_viewmodel import IndexViewModel
 
