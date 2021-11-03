@@ -5,6 +5,8 @@ from basic_web_app.infrastructure import instance
 # Flask App Config
 class FlaskSettings:
 
+    # Load object which contains information on the AWS 
+    # instance which is running Flask
     application = instance.Data()
 
     SECRET_KEY = application.get_secret("flask_secret")
