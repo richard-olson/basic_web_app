@@ -6,23 +6,31 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title>{{ tags.AppName }} Demo Application</title>
-    <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="../static/assets/Res_Amazon-EC2_Instance_48_Dark.png"/>
-    <!-- Core theme CSS -->
+    <link rel="stylesheet" href="/static/fontawesome-free/css/all.min.css"/>
     <link href="../static/css/styles.css" rel="stylesheet"/>
+    <link href="../static/css/animations.css" rel="stylesheet"/>
 </head>
 <body>
-<!-- Responsive navbar-->
+<!-- Navbar-->
+{% set nav_bar = [
+    ('/', 'index', 'Home'),
+    ('/jobs', 'jobs', 'Jobs'),
+] -%}
+{% set active_page = active_page|default('index') -%}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-lg-5">
         <a class="navbar-brand">{{ tags.AppName }} ({{ tags.Environment }}) Demo Application{% if diagnostic == True %} Diagnostic Page {% endif %}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
-                class="navbar-toggler-icon"></span></button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/jobs">Jobs</a></li>
+                {% for href, id, caption in nav_bar %}
+                <li class="nav-item"><a class="nav-link{% if id == active_page %} active{% endif%}" href="{{ href|e }}">{{ caption|e }}</a></li>
+                {% endfor %}
+                <!-- <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/jobs">Jobs</a></li> -->
             </ul>
         </div>
     </div>
@@ -44,6 +52,6 @@
 <footer class="py-5 bg-dark">
     <div class="container"><p class="m-0 small text-center text-white">Built for Awsome Builders by Awesome Builders</p></div>
 </footer>
+<script src="/static/js/htmx.min.js?v=1.6.0"></script>
 </body>
-</html>
 </html>

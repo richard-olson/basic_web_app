@@ -1,59 +1,56 @@
 {% extends "base.html" %}
+{% set active_page = "jobs" %}
 {% block content %}
 <section class="pt-1">
     <div class="container px-lg-5">
-        <form method="POST" class="account-form">
-            <!-- Email address input-->
-            <div class="row justify-content-center">
-                <div class="col-md-6 bg-dark p-4 rounded justify-content-md-center align-items-center mb-2">
-                    <h2 class="fs-4 fw-bold text-white mb-3">Create a Job</h2>
-                    <input class="form-control form-control-lg mb-2" name="name" type="text" placeholder="Job Name" value="{{name}}"/>
-                    <input class="form-control form-control-lg mb-2" name="employer" type="text" placeholder="Employer" value="{{employer}}"/>
-                    <input class="form-control form-control-lg mb-2" name="salary" type="text" placeholder="Salary" value="{{salary}}"/>
-                    <input class="form-control form-control-lg mb-2" name="description" type="text" placeholder="Description" value="{{description}}"/>
-                <div class="col-auto"><button class="btn btn-primary btn-lg mt-2" type="submit">Submit</button></div>
-            {% if new_job is defined %}
-                {% if new_job == True %}
-                <div class="text-center text-success mb-3">Created Successfully</div>
-                {% elif new_job == False %}
-                <div class="text-center text-danger mb-3">All fields must be completed</div>
-                {% endif %}
-            {% endif %}
-                </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 bg-dark p-4 rounded justify-content-md-center align-items-center">
+                <a hx-get="/jobs/add" hx-target="#jobform" hx-swap="innerHTML swap:0.2s"><h2 class="fs-4 fw-bold text-white text-center button">Create a Job  <i class="fas fa-plus-circle text-white fade-me-out"></i></h2></a>
+                <div id="jobform" class="fade-me-in"></div>
             </div>
-        </form>
+        </div>
     </div>
 </section>
+{% if error != "Database error" %}
 <header class="py-1 mt-3 mb-1">
     <div class="container px-lg-4">
+        {% if jobs %}
         <div class="p-md-1 bg-light rounded-3 text-start">
             <div class="m-3">
                 <h3 class=" fw-bold">List of Jobs</h3>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="p-md-1 bg-light rounded-3 text-start">
+        <div class="m-3">
+            <h3>No jobs for now :-(</h3>
+        </div>
+    </div>
+    </div>
+    {% endif %}
 </header>
 <section class="pt-4">
     <div class="container px-lg-5 pt-4">
         <div class="row">
             {% for job in jobs %}
-                <div class="col-lg-6 col-xxl-4 mb-5">
-                    <div class="card bg-light border-0 h-100">
-                        <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
-                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
-                                    class="bi bi-collection"><img
-                                    src="../static/assets/Res_User_48_Dark.png"
+            <div class="col-lg-6 col-xxl-4 mb-5">
+                <div class="card bg-light border-0 h-100">
+                    <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
+                                class="bi bi-collection"><img src="../static/assets/Res_User_48_Dark.png"
                                     alt="User Icon"></i></div>
-                            <h2 class="fs-4 fw-bold">{{job.employer}}</h2>
-                            <p class="mb-0 fw-normal text-start">Role: {{job.name}}</p>
-                            <p class="mb-0 fw-normal text-start">Salary: ${{job.salary}}</p>
-                            <p class="mb-0 fw-normal text-start">Description: {{job.description}}</p>
-                            <p class="mb-0 fw-normal text-start">Created: {{job.created_date}}</p>
-                        </div>
+                        <h2 class="fs-4 fw-bold">{{job.employer}}</h2>
+                        <p class="mb-0 fw-normal text-start">Role: {{job.name}}</p>
+                        <p class="mb-0 fw-normal text-start">Salary: ${{job.salary}}</p>
+                        <p class="mb-0 fw-normal text-start">Description: {{job.description}}</p>
+                        <p class="mb-0 fw-normal text-start">Created: {{job.created_date}}</p>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
     </div>
 </section>
+{% endif %}
 {% endblock %}

@@ -1,7 +1,7 @@
 from basic_web_app import db
 
 
-class JobsTable(db.Model):
+class Job(db.Model):
     __tablename__ = "jobs"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=False, nullable=False)
