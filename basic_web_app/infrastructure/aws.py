@@ -1,24 +1,43 @@
 import datetime
+import base64
 import boto3
-from . import (
-    logger
-)
-from flask import current_app as app
-from .models import Jobs, db
+from botocore.exceptions import ClientError
 
+def get_secret(secret_name, region_name):
+        session = boto3.session.Session()
+        client = session.client(service_name="secretsmanager", region_name=region_name)
 
-def get_db_id():
-    query = "SHOW VARIABLES WHERE Variable_name = 'aurora_server_id'"
-    result = db.session.execute(query).fetchall()
+        try:
+            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        except ClientError as e:
+            raise e
+        else:
+            if "SecretString" in get_secret_value_response:
+                secret = get_secret_value_response["SecretString"]
+                return secret
+            else:
+                decoded_binary_secret = base64.b64decode(
+                    get_secret_value_response["SecretBinary"]
+                )
+                return decoded_binary_secret
 
-    # Close DB connection to ensure cached data isn't returned
-    # when the DB connection severed
-    db.session.close()
-    engine_container = db.get_engine(app)
-    engine_container.dispose()
+def get_parm(parm_name, region_name):
+    session = boto3.session.Session()
+    client = session.client(service_name="ssm", region_name=region_name)
 
-    return result
+    try:
+        response = client.get_parameter(Name=parm_name)
+    except ClientError as e:
+        raise e
 
+    return response["Parameter"]["Value"]
+
+def get_instance(instance_id, region_name):
+    ec2 = boto3.client("ec2", region_name=region_name)
+    response = ec2.describe_instances(
+        Filters=[{"Name": "instance-id", "Values": [instance_id]}]
+    )
+    return response["Reservations"][0]["Instances"][0]
 
 def get_instance_data(region, stack_name):
     data = ec2_instances(region, stack_name)
@@ -125,8 +144,6 @@ def get_cloudwatch_data(region, asg_name):
         StartTime=datetime.datetime.now() - datetime.timedelta(minutes=120),
         EndTime=datetime.datetime.now()
     )
-    logger.debug('Cloudwatch response:')
-    logger.debug(response['MetricDataResults'][0])
 
     if len(response['MetricDataResults'][0]['Values']) > 0:
         response = response['MetricDataResults'][0]['Values'][0]
@@ -134,27 +151,3 @@ def get_cloudwatch_data(region, asg_name):
         response = 0
 
     return response
-
-
-def create_job(name: str, employer: str, salary: int, description: str):
-
-    job = Jobs(
-        name=name,
-        salary=salary.strip('$ '),
-        employer=employer,
-        description=description,
-        created_date=datetime.datetime.now(
-            tz=datetime.timezone(
-                datetime.timedelta(hours=10)
-            )
-        )
-    )
-
-    logger.info('Creating database entry')
-    logger.info(job)
-    db.session.add(job)
-    db.session.commit()
-
-    result = 'Job created'
-
-    return result

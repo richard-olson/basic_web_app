@@ -1,0 +1,6 @@
+flask
+flask-sqlalchemy
+boto3
+python-dotenv
+pymysql
+ec2-metadata
