@@ -3,7 +3,6 @@
     transition: opacity 1s ease-out;
 }
 
-
 .fade-me-in.htmx-swapping {
     opacity: 0;
 }
@@ -19,4 +18,12 @@
 .fade-me-in {
     opacity: 1;
     transition: opacity 0.25s ease-out;
+}
+
+.htmx-settling img {
+    opacity: 0;
+}
+
+img.htmx-indicator {
+    transition: opacity 300ms ease-in;
 }

@@ -2,55 +2,40 @@
 {% set active_page = "jobs" %}
 {% block content %}
 <section class="pt-1">
-    <div class="container px-lg-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6 bg-dark p-4 rounded justify-content-md-center align-items-center">
-                <a hx-get="/jobs/add" hx-target="#jobform" hx-swap="innerHTML swap:0.2s"><h2 class="fs-4 fw-bold text-white text-center button">Create a Job  <i class="fas fa-plus-circle text-white fade-me-out"></i></h2></a>
-                <div id="jobform" class="fade-me-in"></div>
-            </div>
-        </div>
-    </div>
-</section>
-{% if error != "Database error" %}
-<header class="py-1 mt-3 mb-1">
-    <div class="container px-lg-4">
-        {% if jobs %}
-        <div class="p-md-1 bg-light rounded-3 text-start">
-            <div class="m-3">
-                <h3 class=" fw-bold">List of Jobs</h3>
-            </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="p-md-1 bg-light rounded-3 text-start">
-        <div class="m-3">
-            <h3>No jobs for now :-(</h3>
-        </div>
-    </div>
-    </div>
-    {% endif %}
-</header>
-<section class="pt-4">
-    <div class="container px-lg-5 pt-4">
-        <div class="row">
-            {% for job in jobs %}
-            <div class="col-lg-6 col-xxl-4 mb-5">
-                <div class="card bg-light border-0 h-100">
-                    <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
-                                class="bi bi-collection"><img src="../static/assets/Res_User_48_Dark.png"
-                                    alt="User Icon"></i></div>
-                        <h2 class="fs-4 fw-bold">{{job.employer}}</h2>
-                        <p class="mb-0 fw-normal text-start">Role: {{job.name}}</p>
-                        <p class="mb-0 fw-normal text-start">Salary: ${{job.salary}}</p>
-                        <p class="mb-0 fw-normal text-start">Description: {{job.description}}</p>
-                        <p class="mb-0 fw-normal text-start">Created: {{job.created_date}}</p>
-                    </div>
+    <div class="container px-5">
+        <div class="row gx-5">
+            <div class="col-lg-4">
+                <div class="p-3 bg-dark rounded-3">
+                    <a hx-post="/jobs/add_random">
+                        <h3 class="fs-4 fw-bold text-white text-center">Create Random Job&nbsp;&nbsp;<i
+                            class="fas fa-plus-circle text-white"></i></h3>
+                    </a>
                 </div>
             </div>
-            {% endfor %}
+            <div class="col-lg-4">
+                <div class="p-3 bg-dark rounded-3">
+                    <a hx-get="/jobs/add" hx-target="#jobform" hx-swap="innerHTML swap:0.2s">
+                        <h3 class="fs-4 fw-bold text-white text-center">Create a Custom Job&nbsp;&nbsp;<i class="far fa-edit text-white fade-me-out"></i></h3>
+                    </a>
+                    {% if created %}
+                    <div class="text-center">
+                        <div class="btn btn-outline-success mt-3"><i class="far fa-check-circle"></i> Job created</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="p-3 bg-dark rounded-3">
+                    <a hx-delete="/jobs/delete_all">
+                        <h3 class="fs-4 fw-bold text-white text-center">Delete All Jobs&nbsp;&nbsp;<i class="fas fa-eraser text-white"></i></h3>
+                    </a>
+                </div>
+            </div>
         </div>
+        <div class="row gx-5 fade-me-in" id="jobform"></div>
     </div>
 </section>
-{% endif %}
+<div id="list-of-jobs" hx-get="/jobs/show" hx-trigger="load" hx-swap="innerHTML swap:0.5s">
+    <img src="/static/assets/bars.svg" width="150px" class="htmx-indicator position-absolute top-50 start-45"/>
+</div>
 {% endblock %}

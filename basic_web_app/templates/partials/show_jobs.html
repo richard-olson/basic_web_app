@@ -1,0 +1,48 @@
+{% if error != "Database error" %}
+<header class="py-1 mt-3 mb-1">
+    <div class="container px-lg-4">
+        {% if jobs %}
+        <div class="p-md-1 bg-light rounded-3 text-start">
+            <div class="m-3">
+                <h3 class=" fw-bold">List of Jobs</h3>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="p-md-1 bg-light rounded-3 text-start">
+        <div class="m-3">
+            <h3>No jobs for now :-(</h3>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+</header>
+<section class="pt-4">
+    <div class="container px-lg-5 pt-4">
+        <div class="row" hx-target="closest .col-lg-6" hx-swap="outerHTML swap:0.5s">
+            {% for job in jobs %}
+            <div class="col-lg-6 col-xxl-4 mb-5 fade-me-out " id="job-{{job.id}}">
+                <div class="card bg-secondary border-0 h-100">
+                    <div class="card-body text-center p-2 px-5 position-relative mb-2">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
+                                class="bi bi-collection"><img src="../static/assets/Res_User_48_Dark.png"
+                                    alt="User Icon"></i></div>
+                        <h4 class="card-title fs-4 fw-bold">{{job.employer}}</h4>
+                        <div class="card-text text-start fw-normal mb-5">
+                            <p>Role: {{job.name}}<br>
+                                Salary: ${{job.salary}}<br>
+                                Description: {{job.description}}<br>
+                                Created: {{job.created_date}}</p>
+                            <div class="text-center">
+                                <button class="btn btn-outline-secondary position-absolute bottom-0 start-45" hx-delete="/jobs/delete/{{job.id}}">
+                                    <i class="far fa-trash-alt text-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

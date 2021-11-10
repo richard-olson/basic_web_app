@@ -1,24 +1,31 @@
-<form method="POST" class="account-form" hx-post="/jobs/add">
-    <input class="form-control form-control-lg mb-2" name="name" type="text" placeholder="Job Name" {% if name
-        %}value="{{name}}" {% endif %} />
-    <input class="form-control form-control-lg mb-2" name="employer" type="text" placeholder="Employer" {% if employer
-        %}value="{{employer}}" {% endif %} />
-    <input class="form-control form-control-lg mb-2" name="salary" type="text" placeholder="Salary" {% if salary
-        %}value="{{salary}}" {% endif %} />
-    <input class="form-control form-control-lg mb-2" name="description" type="text" placeholder="Description" {% if
-        description %}value="{{description}}" {% endif %} />
-    <div class="col-auto"><button class="btn btn-primary btn-lg mt-2" type="submit">Submit</button>
-        <button class="btn btn-danger btn-lg mt-2 " hx-get="/jobs/cancel_add" hx-target=".account-form">Cancel</button>
-    </div>
+<div class="col-md-4">
+    <div class="p-3"></div>
+</div>
+<div class="col-md-4">
+    <div class="bg-dark p-3 rounded-3 mt-n3">
+    <form method="POST" hx-post="/jobs/add" hx-target="#jobform">
+        <input class="form-control form-control-lg mb-2" name="name" type="text" placeholder="Job Name" {% if name
+            %}value="{{name}}" {% endif %} />
+        <input class="form-control form-control-lg mb-2" name="employer" type="text" placeholder="Employer" {% if
+            employer %}value="{{employer}}" {% endif %} />
+        <input class="form-control form-control-lg mb-2" name="salary" type="text" placeholder="Salary" {% if salary
+            %}value="{{salary}}" {% endif %} />
+        <input class="form-control form-control-lg mb-2" name="description" type="text" placeholder="Description" {% if
+            description %}value="{{description}}" {% endif %} />
+        <div class="col-auto"><button class="btn btn-primary btn-lg mt-2" type="submit">Submit</button>
+            <button class="btn btn-danger btn-lg mt-2 " hx-get="/jobs/cancel_add"
+                hx-target="#jobform">Cancel</button>
+        </div>
 
-    {% if error %}
-    <div class="col text-center">
-        <div class="text-center mt-3 btn btn-outline-warning"><i class="fas fa-exclamation"></i> {{ error }}</div>
-    </div>
-    {% elif created %}
-    <div class="col text-center">
-        <div class="btn btn-outline-success mt-3"><i class="far fa-check-circle"></i> Job created</div>
-    </div>
-    {% endif %}
+        {% if error %}
+        <div class="col text-center">
+            <div class="text-center mt-3 btn btn-outline-warning"><i class="fas fa-exclamation"></i> {{ error }}</div>
+        </div>
+        {% endif %}
 
-</form>
+    </form>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="p-3"></div>
+</div>
