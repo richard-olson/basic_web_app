@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_
+from flask import Blueprint, request
 from basic_web_app.infrastructure.view_modifiers import response
 from basic_web_app.viewmodels.home.index_viewmodel import IndexViewModel
 from basic_web_app.viewmodels.home.async_index_viewmodel import AsyncIndexViewModel
