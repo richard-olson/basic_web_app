@@ -1,4 +1,5 @@
 from ec2_metadata import ec2_metadata
+from os import getenv
 import basic_web_app.infrastructure.aws as aws
 
 
@@ -6,6 +7,8 @@ class Data:
     def __init__(self) -> None:
         self.instance_id = ec2_metadata.instance_id
         self.region = ec2_metadata.region
+        self.app_name = getenv("APPNAME")
+        self.env_state = getenv("APPENV").capitalize()
         self.set_tags()
         
     def get_instance_id(self):
