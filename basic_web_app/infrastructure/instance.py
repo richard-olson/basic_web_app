@@ -8,7 +8,7 @@ class Data:
         self.instance_id = ec2_metadata.instance_id
         self.region = ec2_metadata.region
         self.app_name = getenv("APPNAME")
-        self.env_state = getenv("APPENV").capitalize()
+        self.env_state = getenv("APPENV").capitalize
         self.set_tags()
         
     def get_instance_id(self):
@@ -29,12 +29,12 @@ class Data:
         self.tags = self._retrieve_aws_tags()
 
     def get_object_name(self, object: str):
-        tags = self.get_tags()
-        base_name = "/" + tags["AppName"] + "/" + tags["Environment"]
+        
+        base_name = "/" + self.app_name + "/" + self.env_state
         names = {}
         names["flask_secret"] = base_name + "/Flask-Secret"
         names["db_secret"] = base_name + "/RDS-Secret"
-        names["db_name"] = tags["AppName"] + tags["Environment"] + "Database"
+        names["db_name"] = self.app_name + self.env_state + "Database"
         names["db_endpoint"] = base_name + "/RDS-Endpoint"
 
         return names[object]
